@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        :root {
+            --pink-bg: #ffdae0;
+            --dark-pink: #ff4d6d;
+            --white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--pink-bg);
+            /* Add your background image here later: */
+            /* background-image: url('your-image.jpg'); */
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        h1 {
+            color: var(--dark-pink);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            min-height: 50px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        #yesBtn {
+            background-color: var(--dark-pink);
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #999;
+            color: white;
+            position: relative; /* Essential for sliding */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Popup Styling */
+        #popup {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--white);
+            color: var(--dark-pink);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 100;
+            font-weight: bold;
+        }
+
+        /* Heart Animation */
+        .heart {
+            position: absolute;
+            bottom: -10%;
+            color: var(--dark-pink);
+            font-size: 20px;
+            user-select: none;
+            animation: moveUp 3s linear forwards;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="popup">please press the other one (😢)</div>
+
+    <div class="container">
+        <h1 id="mainText">Will you be my Valentine?</h1>
+        <div class="btn-group">
+            <button id="yesBtn" onclick="celebrate()">Yes</button>
+            <button id="noBtn" onclick="moveNo()">No</button>
+        </div>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        const noBtn = document.getElementById('noBtn');
+        const popup = document.getElementById('popup');
+        const mainText = document.getElementById('mainText');
+
+        // Coordinates for the "No" button sliding
+        // [right, left, up, down]
+        const positions = [
+            { x: 150, y: 0 },   // Right
+            { x: -150, y: 0 },  // Left
+            { x: 0, y: -150 },  // Up
+            { x: 0, y: 150 }    // Down
+        ];
+
+        function moveNo() {
+            // Apply coordinates based on click count
+            let pos = positions[noClickCount % 4];
+            noBtn.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+            
+            noClickCount++;
+
+            // Every 4th click, show popup
+            if (noClickCount % 4 === 0) {
+                showPopup();
+            }
+        }
+
+        function showPopup() {
+            popup.style.display = 'block';
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 5000);
+        }
+
+        function celebrate() {
+            // Change text
+            mainText.innerHTML = "Yuppee! 😊";
+            
+            // Hide buttons
+            document.querySelector('.btn-group').style.display = 'none';
+
+            // Start heart shower
+            setInterval(createHeart, 100);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            
+            document.body.appendChild(heart);
+
+            // Remove heart from DOM after animation finishes
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
